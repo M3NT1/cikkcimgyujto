@@ -7,6 +7,8 @@ import logging
 import os
 import configparser
 from article_analysis import analyze_titles
+import multiprocessing
+from cikkcimgyujto_gui import run_gui
 
 # Konfiguráció betöltése
 config = configparser.ConfigParser()
@@ -122,36 +124,48 @@ def main():
     conn = create_database()
     print_database_info()
 
+    # GUI indítása új folyamatban
+    gui_process = multiprocessing.Process(target=run_gui, args=(config,))
+    gui_process.start()
+
     websites = {
         '444': (config['444']['url'], extract_titles_444),
         'INDEX': (config['INDEX']['url'], extract_titles_index)
     }
 
-    while True:
-        for source, (url, extract_function) in websites.items():
-            if config[source.upper()].getboolean('enabled'):
-                scrape_website(conn, source, url, extract_function)
+    try:
+        while gui_process.is_alive():
+            for source, (url, extract_function) in websites.items():
+                if config[source.upper()].getboolean('enabled'):
+                    scrape_website(conn, source, url, extract_function)
 
-        c = conn.cursor()
-        c.execute("SELECT COUNT(*) FROM articles")
-        total_articles = c.fetchone()[0]
-        logging.info(f"Összes cikk az adatbázisban: {total_articles}")
+            c = conn.cursor()
+            c.execute("SELECT COUNT(*) FROM articles")
+            total_articles = c.fetchone()[0]
+            logging.info(f"Összes cikk az adatbázisban: {total_articles}")
 
-        show_recent_articles()
+            show_recent_articles()
 
-        # Cikkelemzés futtatása
-        try:
-            analysis_results = analyze_titles(DB_PATH)
-            logging.info(f"Téma elemzés eredményei ({config['ANALYSIS']['num_topics']} téma):")
-            for result in analysis_results:
-                logging.info(f"Téma {result['topic_id']}:")
-                logging.info(f"  Leggyakoribb szavak: {', '.join(result['top_words'])}")
-                logging.info(f"  Átlagos hangulat: {result['avg_sentiment']:.2f}")
-                logging.info(f"  Gyakoriság: {result['frequency']}")
-        except Exception as e:
-            logging.error(f"Hiba történt a cikkelemzés során: {str(e)}", exc_info=True)
+            # Cikkelemzés futtatása
+            try:
+                analysis_results = analyze_titles(DB_PATH)
+                logging.info(f"Téma elemzés eredményei ({config['ANALYSIS']['num_topics']} téma):")
+                for result in analysis_results:
+                    logging.info(f"Téma {result['topic_id']}:")
+                    logging.info(f"  Leggyakoribb szavak: {', '.join(result['top_words'])}")
+                    logging.info(f"  Átlagos hangulat: {result['avg_sentiment']:.2f}")
+                    logging.info(f"  Gyakoriság: {result['frequency']}")
+            except Exception as e:
+                logging.error(f"Hiba történt a cikkelemzés során: {str(e)}", exc_info=True)
 
-        time.sleep(int(config['DEFAULT']['refresh_interval']))
+            time.sleep(int(config['DEFAULT']['refresh_interval']))
+    except KeyboardInterrupt:
+        print("Program leállítva a felhasználó által.")
+    finally:
+        if gui_process.is_alive():
+            gui_process.terminate()
+        gui_process.join()
 
 if __name__ == "__main__":
+    multiprocessing.freeze_support()  # Szükséges Windows rendszereken
     main()

@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="41a0c039-61ca-4ce4-ab1a-343e773db595" name="Changes" comment="V2 Cikkek elemzése">
+    <list default="true" id="41a0c039-61ca-4ce4-ab1a-343e773db595" name="Changes" comment="V3 Cikkek elemzése">
+      <change afterPath="$PROJECT_DIR$/cikkcimgyujto_gui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/article_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/article_analysis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cikkcimgyujto.py" beforeDir="false" afterPath="$PROJECT_DIR$/cikkcimgyujto.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.ini" beforeDir="false" afterPath="$PROJECT_DIR$/config.ini" afterDir="false" />
     </list>
@@ -25,9 +25,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2kukSJbMzpw4bqziNrkL4sFTrfl" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -38,6 +38,7 @@
   "keyToString": {
     "Python.article_analysis.executor": "Run",
     "Python.cikkcimgyujto.executor": "Run",
+    "Python.cikkcimgyujto_gui.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "last_opened_file_path": "/Users/kasnyiklaszlo/PycharmProjects/Cikkcímgyűjtő"
@@ -45,6 +46,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/" />
     </key>
   </component>
@@ -80,12 +82,21 @@
       <option name="project" value="LOCAL" />
       <updated>1724154598532</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="V3 Cikkek elemzése">
+      <option name="closed" value="true" />
+      <created>1724155143585</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1724155143585</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Első verzió. 444.hu és index.hu cikk gyűjtő SQL lite-ba" />
     <MESSAGE value="V2 Cikkek elemzése" />
-    <option name="LAST_COMMIT_MESSAGE" value="V2 Cikkek elemzése" />
+    <MESSAGE value="V3 Cikkek elemzése" />
+    <option name="LAST_COMMIT_MESSAGE" value="V3 Cikkek elemzése" />
   </component>
 </project>
