@@ -1,9 +1,18 @@
 import sqlite3
 from gensim import corpora, models
-from textblob import TextBlob
 from collections import Counter
+import spacy
+import configparser
+import os
 
-# Egyszerű magyar stopszavak lista
+# Konfiguráció betöltése
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+# HuSpaCy modell betöltése
+nlp = spacy.load("hu_core_news_lg")
+
+# Magyar stopszavak listája
 HUNGARIAN_STOP_WORDS = set(
     ['a', 'az', 'és', 'hogy', 'nem', 'ez', 'van', 'volt', 'egy', 'de', 'is', 'aki', 'ami', 'amely', 'meg', 'fel', 'ki',
      'be', 'le', 'el', 'át', 'rá', 'te', 'mi', 'ti', 'ők', 'én', 'ő', 'olyan', 'ilyen', 'csak', 'így', 'úgy', 'vagy',
@@ -24,7 +33,7 @@ def preprocess_text(text):
     return [word for word in words if word.isalnum() and word not in HUNGARIAN_STOP_WORDS]
 
 
-def topic_modeling(titles, num_topics=5):
+def topic_modeling(titles, num_topics):
     preprocessed_titles = [preprocess_text(title) for title in titles]
     dictionary = corpora.Dictionary(preprocessed_titles)
     corpus = [dictionary.doc2bow(text) for text in preprocessed_titles]
@@ -34,18 +43,22 @@ def topic_modeling(titles, num_topics=5):
     return lda_model, dictionary, corpus
 
 
-def analyze_sentiment(text):
-    return TextBlob(text).sentiment.polarity
+def analyze_sentiment_huspacy(text):
+    doc = nlp(text)
+    return doc.sentiment
 
 
 def analyze_titles(db_path):
     titles = get_titles_from_db(db_path)
 
+    # Témák számának beolvasása a konfigurációból
+    num_topics = int(config['ANALYSIS']['num_topics'])
+
     # Témamodellezés
-    lda_model, dictionary, corpus = topic_modeling(titles)
+    lda_model, dictionary, corpus = topic_modeling(titles, num_topics)
 
     # Témák és hangulatok elemzése
-    topic_sentiments = {i: [] for i in range(lda_model.num_topics)}
+    topic_sentiments = {i: [] for i in range(num_topics)}
     topic_frequencies = Counter()
 
     for i, title in enumerate(titles):
@@ -54,8 +67,8 @@ def analyze_titles(db_path):
         topic_distribution = lda_model.get_document_topics(bow)
         main_topic = max(topic_distribution, key=lambda x: x[1])[0]
 
-        # Hangulat elemzése
-        sentiment = analyze_sentiment(title)
+        # Hangulat elemzése HuSpaCy-vel
+        sentiment = analyze_sentiment_huspacy(title)
 
         # Adatok gyűjtése
         topic_sentiments[main_topic].append(sentiment)
@@ -63,7 +76,7 @@ def analyze_titles(db_path):
 
     # Eredmények összesítése
     results = []
-    for topic_id in range(lda_model.num_topics):
+    for topic_id in range(num_topics):
         topic_words = lda_model.show_topic(topic_id, topn=5)
         avg_sentiment = sum(topic_sentiments[topic_id]) / len(topic_sentiments[topic_id]) if topic_sentiments[
             topic_id] else 0

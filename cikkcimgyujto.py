@@ -142,7 +142,7 @@ def main():
         # Cikkelemzés futtatása
         try:
             analysis_results = analyze_titles(DB_PATH)
-            logging.info("Téma elemzés eredményei:")
+            logging.info(f"Téma elemzés eredményei ({config['ANALYSIS']['num_topics']} téma):")
             for result in analysis_results:
                 logging.info(f"Téma {result['topic_id']}:")
                 logging.info(f"  Leggyakoribb szavak: {', '.join(result['top_words'])}")
