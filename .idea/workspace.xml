@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="41a0c039-61ca-4ce4-ab1a-343e773db595" name="Changes" comment="V3 Cikkek elemzése">
-      <change afterPath="$PROJECT_DIR$/cikkcimgyujto_gui.py" afterDir="false" />
+    <list default="true" id="41a0c039-61ca-4ce4-ab1a-343e773db595" name="Changes" comment="V4 GUI készítés">
+      <change afterPath="$PROJECT_DIR$/run_analysis_logger.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cikkcimgyujto.py" beforeDir="false" afterPath="$PROJECT_DIR$/cikkcimgyujto.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.ini" beforeDir="false" afterPath="$PROJECT_DIR$/config.ini" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,13 +89,22 @@
       <option name="project" value="LOCAL" />
       <updated>1724155143585</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="V4 GUI készítés">
+      <option name="closed" value="true" />
+      <created>1724180368998</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1724180368998</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Első verzió. 444.hu és index.hu cikk gyűjtő SQL lite-ba" />
     <MESSAGE value="V2 Cikkek elemzése" />
     <MESSAGE value="V3 Cikkek elemzése" />
-    <option name="LAST_COMMIT_MESSAGE" value="V3 Cikkek elemzése" />
+    <MESSAGE value="V4 GUI készítés" />
+    <option name="LAST_COMMIT_MESSAGE" value="V4 GUI készítés" />
   </component>
 </project>

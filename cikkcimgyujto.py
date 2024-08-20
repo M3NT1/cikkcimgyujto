@@ -9,6 +9,10 @@ import configparser
 from article_analysis import analyze_titles
 import multiprocessing
 from cikkcimgyujto_gui import run_gui
+from run_analysis_logger import RunAnalysisLogger
+import sys
+import platform
+import gensim
 
 # Konfiguráció betöltése
 config = configparser.ConfigParser()
@@ -124,6 +128,8 @@ def main():
     conn = create_database()
     print_database_info()
 
+    run_logger = RunAnalysisLogger(DB_PATH)
+
     # GUI indítása új folyamatban
     gui_process = multiprocessing.Process(target=run_gui, args=(config,))
     gui_process.start()
@@ -148,7 +154,42 @@ def main():
 
             # Cikkelemzés futtatása
             try:
-                analysis_results = analyze_titles(DB_PATH)
+                start_time = time.time()
+                analysis_result = analyze_titles(DB_PATH)
+                end_time = time.time()
+                lda_training_time = end_time - start_time
+
+                # Ellenőrizzük, hogy az analysis_result tartalmazza-e a szükséges információkat
+                if isinstance(analysis_result, dict) and 'topics' in analysis_result:
+                    analysis_results = analysis_result['topics']
+                    dictionary = analysis_result.get('dictionary', None)
+                    corpus = analysis_result.get('corpus', None)
+                else:
+                    analysis_results = analysis_result
+                    dictionary = None
+                    corpus = None
+
+                run_logger.log_run(
+                    document_count=total_articles,
+                    unique_tokens=len(dictionary) if dictionary else 0,
+                    corpus_positions=sum(len(doc) for doc in corpus) if corpus else 0,
+                    gensim_version=gensim.__version__,
+                    python_version=sys.version,
+                    platform=platform.platform(),
+                    lda_topics=int(config['ANALYSIS']['num_topics']),
+                    lda_passes=1,  # Ez lehet változó, a beállításaidtól függően
+                    lda_iterations=50,  # Ez is lehet változó
+                    lda_training_time=lda_training_time,
+                    topic_analysis=[
+                        {
+                            'topic_id': result['topic_id'],
+                            'top_words': result['top_words'],
+                            'avg_sentiment': result['avg_sentiment'],
+                            'frequency': result['frequency']
+                        } for result in analysis_results
+                    ]
+                )
+
                 logging.info(f"Téma elemzés eredményei ({config['ANALYSIS']['num_topics']} téma):")
                 for result in analysis_results:
                     logging.info(f"Téma {result['topic_id']}:")
@@ -165,6 +206,7 @@ def main():
         if gui_process.is_alive():
             gui_process.terminate()
         gui_process.join()
+        conn.close()
 
 if __name__ == "__main__":
     multiprocessing.freeze_support()  # Szükséges Windows rendszereken
