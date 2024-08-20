@@ -6,6 +6,7 @@ import time
 import logging
 import os
 import configparser
+from article_analysis import analyze_titles
 
 # Konfiguráció betöltése
 config = configparser.ConfigParser()
@@ -65,7 +66,6 @@ def extract_titles_index(html_content):
             titles.append(title)
 
     return titles
-
 
 def save_to_database(conn, source, titles):
     c = conn.cursor()
@@ -138,6 +138,18 @@ def main():
         logging.info(f"Összes cikk az adatbázisban: {total_articles}")
 
         show_recent_articles()
+
+        # Cikkelemzés futtatása
+        try:
+            analysis_results = analyze_titles(DB_PATH)
+            logging.info("Téma elemzés eredményei:")
+            for result in analysis_results:
+                logging.info(f"Téma {result['topic_id']}:")
+                logging.info(f"  Leggyakoribb szavak: {', '.join(result['top_words'])}")
+                logging.info(f"  Átlagos hangulat: {result['avg_sentiment']:.2f}")
+                logging.info(f"  Gyakoriság: {result['frequency']}")
+        except Exception as e:
+            logging.error(f"Hiba történt a cikkelemzés során: {str(e)}", exc_info=True)
 
         time.sleep(int(config['DEFAULT']['refresh_interval']))
 
